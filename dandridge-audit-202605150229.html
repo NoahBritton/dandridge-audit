@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Dandridge Audit · A Website Review</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400;9..144,600;9..144,700;9..144,900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+
+<style>
+  /* ────────────────────────────────────────────
+     EDITORIAL DESIGN SYSTEM
+     paper / ink / a single bleeding red
+     ─────────────────────────────────────────── */
+  :root {
+    --paper:    #f3ede0;
+    --paper-2:  #ebe4d2;
+    --card:     #fbf7eb;
+    --ink:      #15140f;
+    --ink-soft: #3a342a;
+    --muted:    #8a8275;
+    --rule:     #d8cfb8;
+    --bleed:    #b8121a;
+    --bleed-2:  #8e0d14;
+    --gold:     #b8861b;
+    --serif:    'Fraunces', 'Times New Roman', serif;
+    --sans:     'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono:     'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--bleed); color: var(--paper); }
+
+  /* paper grain */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 25% 35%, rgba(120,100,60,0.04) 1px, transparent 1px),
+      radial-gradient(circle at 75% 65%, rgba(120,100,60,0.03) 1px, transparent 1px);
+    background-size: 4px 4px, 6px 6px;
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: multiply;
+  }
+
+  /* ── chapter rail (sticky top) ─────────────── */
+  .chapter-rail {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    padding: 14px 28px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .chapter-rail .left { font-weight: 500; }
+  .chapter-rail .right { color: var(--muted); }
+  .chapter-rail .progress-line {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    height: 2px;
+    background: var(--bleed);
+    width: 0;
+    transition: width 0.1s ease-out;
+  }
+
+  /* ── masthead ──────────────────────────────── */
+  .masthead {
+    padding: 110px 28px 80px;
+    border-bottom: 4px double var(--ink);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+  .masthead .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--bleed);
+    margin-bottom: 22px;
+    font-weight: 500;
+  }
+  .masthead .kicker::before,
+  .masthead .kicker::after {
+    content: ' · ';
+    color: var(--muted);
+  }
+  .masthead h1 {
+    font-family: var(--serif);
+    font-weight: 900;
+    font-size: clamp(48px, 9vw, 110px);
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    margin: 0 auto 18px;
+    max-width: 14ch;
+    font-variation-settings: "opsz" 144;
+  }
+  .masthead h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--bleed);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .masthead .deck {
+    font-family: var(--serif);
+    font-size: clamp(18px, 2.4vw, 24px);
+    line-height: 1.4;
+    color: var(--ink-soft);
+    max-width: 30ch;
+    margin: 0 auto 38px;
+    font-style: italic;
+    font-weight: 400;
+  }
+  .masthead .byline {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .masthead .jump {
+    display: inline-block;
+    margin-top: 36px;
+    padding: 14px 28px;
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .masthead .jump:hover {
+    background: var(--bleed);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+
+  /* ── shared section frame ──────────────────── */
+  .spread {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 90px 28px;
+    position: relative;
+    z-index: 2;
+  }
+  @media (max-width: 700px) {
+    .spread { padding: 64px 22px; }
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    color: var(--bleed);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(34px, 5.5vw, 60px);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+    max-width: 18ch;
+    font-variation-settings: "opsz" 144;
+  }
+  .section-title em {
+    font-style: italic;
+    color: var(--bleed);
+    font-weight: 400;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .section-deck {
+    font-family: var(--serif);
+    font-size: clamp(17px, 1.6vw, 21px);
+    color: var(--ink-soft);
+    max-width: 56ch;
+    margin: 0 0 50px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* ── stat trio (asymmetric grid) ───────────── */
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .stat {
+    padding: 36px 30px;
+    border-right: 1px solid var(--rule);
+  }
+  .stat:last-child { border-right: none; }
+  .stat .big {
+    font-family: var(--serif);
+    font-weight: 900;
+    font-size: clamp(52px, 7vw, 88px);
+    line-height: 0.9;
+    color: var(--ink);
+    letter-spacing: -0.04em;
+    margin-bottom: 14px;
+    display: block;
+    font-variation-settings: "opsz" 144;
+  }
+  .stat.bleed .big { color: var(--bleed); }
+  .stat.gold .big { color: var(--gold); }
+  .stat .cap {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 500;
+  }
+  .stat .gloss {
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  @media (max-width: 700px) {
+    .stats { grid-template-columns: 1fr; }
+    .stat { border-right: none; border-bottom: 1px solid var(--rule); }
+    .stat:last-child { border-bottom: none; }
+  }
+
+  /* ── pullquote / TLDR ──────────────────────── */
+  .pullquote {
+    margin: 80px auto;
+    max-width: 30ch;
+    text-align: center;
+    position: relative;
+    padding: 30px 0;
+  }
+  .pullquote::before {
+    content: '"';
+    font-family: var(--serif);
+    font-size: 240px;
+    line-height: 0.8;
+    color: var(--bleed);
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.18;
+    font-style: italic;
+    pointer-events: none;
+  }
+  .pullquote p {
+    font-family: var(--serif);
+    font-size: clamp(22px, 3.2vw, 34px);
+    line-height: 1.25;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0 0 18px;
+    font-variation-settings: "opsz" 96;
+    position: relative;
+  }
+  .pullquote p em {
+    font-style: italic;
+    color: var(--bleed);
+    font-weight: 400;
+  }
+  .pullquote .attr {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    position: relative;
+  }
+  .pullquote .attr::before { content: '— '; }
+
+  /* ── health ledger (typewriter table) ──────── */
+  .ledger {
+    margin-top: 30px;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 26px 1fr 90px 80px;
+    gap: 18px;
+    align-items: center;
+    padding: 18px 0;
+    border-bottom: 1px dotted var(--rule);
+  }
+  .ledger-row:last-child { border-bottom: none; }
+  .ledger-row .idx {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .ledger-row .area {
+    font-family: var(--serif);
+    font-size: clamp(17px, 2vw, 22px);
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .ledger-row .meter {
+    height: 2px;
+    background: var(--rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .ledger-row .meter-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0;
+    background: var(--ink);
+    transition: width 1.2s cubic-bezier(.4,0,.2,1);
+  }
+  .ledger-row.poor .meter-fill { background: var(--bleed); }
+  .ledger-row.fine .meter-fill { background: var(--gold); }
+  .ledger-row.good .meter-fill { background: var(--ink); }
+  .ledger-row .pct {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 500;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 700px) {
+    .ledger-row { grid-template-columns: 16px 1fr 60px 50px; gap: 10px; padding: 14px 0; }
+    .ledger-row .area { font-size: 15px; }
+    .ledger-row .pct { font-size: 11px; }
+  }
+
+  /* ── chapter (priority finding) ────────────── */
+  .chapter {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 60px;
+    padding: 70px 0;
+    border-top: 1px solid var(--rule);
+    align-items: start;
+  }
+  .chapter:first-of-type { border-top: 4px double var(--ink); }
+  .chapter:last-of-type { border-bottom: 4px double var(--ink); }
+  .chapter-num {
+    font-family: var(--serif);
+    font-size: clamp(80px, 12vw, 160px);
+    font-weight: 900;
+    line-height: 0.85;
+    color: var(--ink);
+    letter-spacing: -0.06em;
+    font-variation-settings: "opsz" 144;
+    position: sticky;
+    top: 90px;
+  }
+  .chapter.critical .chapter-num { color: var(--bleed); }
+  .chapter-body { padding-top: 14px; }
+  .chapter-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    margin-bottom: 18px;
+    font-weight: 600;
+    border: 1px solid var(--ink);
+  }
+  .chapter.critical .chapter-tag {
+    background: var(--bleed);
+    color: var(--paper);
+    border-color: var(--bleed);
+  }
+  .chapter.high .chapter-tag {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .chapter h3 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 3.6vw, 42px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 20px;
+    font-variation-settings: "opsz" 144;
+  }
+  .chapter p {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+  }
+  .chapter p em { font-style: italic; color: var(--bleed-2); font-weight: 500; }
+  .chapter p strong { font-weight: 600; color: var(--ink); }
+  .chapter code {
+    font-family: var(--mono);
+    font-size: 14px;
+    background: var(--paper-2);
+    padding: 2px 7px;
+    border: 1px solid var(--rule);
+  }
+  @media (max-width: 800px) {
+    .chapter { grid-template-columns: 1fr; gap: 18px; padding: 50px 0; }
+    .chapter-num { position: static; font-size: 72px; }
+  }
+
+  /* ── checklist (quick wins) ────────────────── */
+  .checklist {
+    margin-top: 30px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    padding: 0;
+  }
+  .checklist-row {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--rule);
+    transition: background 0.2s;
+    cursor: pointer;
+    user-select: none;
+  }
+  .checklist-row:last-child { border-bottom: none; }
+  .checklist-row:hover { background: var(--paper-2); }
+  .checklist-row .box {
+    border-right: 1px solid var(--rule);
+    padding: 22px 0;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--ink);
+    font-weight: 700;
+    transition: background 0.2s, color 0.2s;
+  }
+  .checklist-row .text {
+    padding: 22px 24px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    transition: color 0.3s, text-decoration 0.3s;
+  }
+  .checklist-row.done .box {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .checklist-row.done .box::before { content: '✓'; }
+  .checklist-row:not(.done) .box::before { content: '◯'; }
+  .checklist-row.done .text {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+  }
+  .checklist-row .text strong { color: var(--ink); font-weight: 600; }
+  .checklist-row .text code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--paper-2);
+    padding: 1px 5px;
+  }
+  @media (max-width: 600px) {
+    .checklist-row { grid-template-columns: 44px 1fr; }
+    .checklist-row .box { padding: 16px 0; font-size: 12px; }
+    .checklist-row .text { padding: 16px 16px; font-size: 14px; }
+  }
+
+  /* ── area cards (filterable column) ────────── */
+  .filter-bar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .filter-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  .filter-btn:hover { background: var(--paper-2); color: var(--ink); }
+  .filter-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .filter-btn .count {
+    color: var(--muted);
+    margin-left: 6px;
+  }
+  .filter-btn.active .count { color: var(--paper-2); opacity: 0.7; }
+
+  .area-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    border-left: 1px solid var(--rule);
+  }
+  .area {
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 30px 32px;
+    background: var(--card);
+    transition: background 0.2s, transform 0.3s;
+    position: relative;
+    cursor: pointer;
+  }
+  .area:hover { background: var(--paper); }
+  .area-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+  }
+  .area-head h4 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 22px;
+    margin: 0;
+    line-height: 1.1;
+    font-variation-settings: "opsz" 96;
+  }
+  .area-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid var(--ink);
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-left: 10px;
+  }
+  .area.critical .area-tag { background: var(--bleed); color: var(--paper); border-color: var(--bleed); }
+  .area.high .area-tag { background: var(--ink); color: var(--paper); }
+  .area.medium .area-tag { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .area.low .area-tag { background: transparent; color: var(--ink); }
+  .area ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .area ul li {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    padding: 8px 0 8px 22px;
+    position: relative;
+    border-top: 1px dotted var(--rule);
+  }
+  .area ul li:first-child { border-top: none; }
+  .area ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    color: var(--bleed);
+    font-weight: 600;
+  }
+  .area ul li strong { color: var(--ink); font-weight: 600; }
+  .area ul li code { font-family: var(--mono); font-size: 13px; background: var(--paper-2); padding: 1px 5px; }
+  .area ul li em { font-style: italic; color: var(--bleed-2); }
+  .area.hidden { display: none; }
+  @media (max-width: 800px) {
+    .area-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── before/after copy spreads ─────────────── */
+  .spreads { margin-top: 20px; }
+  .copy-spread {
+    margin-bottom: 64px;
+    padding-top: 32px;
+    border-top: 1px solid var(--rule);
+  }
+  .copy-spread:first-child { border-top: none; padding-top: 0; }
+  .copy-spread h4 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 24px;
+    line-height: 1.1;
+  }
+  .ba {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    background: var(--ink);
+    border: 1px solid var(--ink);
+  }
+  .ba-pane {
+    padding: 26px 28px;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .ba-pane.before {
+    background: var(--paper-2);
+    color: var(--ink-soft);
+  }
+  .ba-pane.before .lab {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: block;
+    font-weight: 600;
+  }
+  .ba-pane.after {
+    background: var(--card);
+    color: var(--ink);
+  }
+  .ba-pane.after .lab {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--bleed);
+    margin-bottom: 14px;
+    display: block;
+    font-weight: 600;
+  }
+  .ba-pane strong { color: var(--ink); font-weight: 600; }
+  .ba-pane em { color: var(--bleed-2); font-style: italic; }
+  @media (max-width: 700px) {
+    .ba { grid-template-columns: 1fr; }
+  }
+
+  /* ── timeline (vertical w/ markers) ────────── */
+  .timeline-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .timeline-tab {
+    flex: 1;
+    padding: 16px 18px;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    text-align: left;
+  }
+  .timeline-tab:last-child { border-right: none; }
+  .timeline-tab:hover { background: var(--paper-2); color: var(--ink); }
+  .timeline-tab.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .timeline-tab .when {
+    display: block;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: -0.01em;
+    color: inherit;
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+  .timeline-list {
+    display: none;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .timeline-list.active { display: block; }
+  .timeline-list li {
+    padding: 18px 0 18px 36px;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    position: relative;
+    border-bottom: 1px dotted var(--rule);
+  }
+  .timeline-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 26px;
+    width: 14px;
+    height: 1px;
+    background: var(--bleed);
+  }
+  .timeline-list li code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--paper-2);
+    padding: 1px 5px;
+  }
+  .timeline-list li strong { color: var(--ink); font-weight: 600; }
+  @media (max-width: 700px) {
+    .timeline-tabs { flex-direction: column; border-bottom: none; }
+    .timeline-tab { border-right: none; border-bottom: 1px solid var(--rule); text-align: left; }
+    .timeline-tab .when { font-size: 18px; }
+  }
+
+  /* ── footnotes / sources ───────────────────── */
+  .footnotes {
+    margin-top: 30px;
+    border-top: 4px double var(--ink);
+    padding-top: 30px;
+  }
+  .footnotes ol {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    counter-reset: fn;
+  }
+  .footnotes li {
+    counter-increment: fn;
+    padding: 18px 0 18px 50px;
+    border-bottom: 1px dotted var(--rule);
+    position: relative;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .footnotes li::before {
+    content: counter(fn, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--bleed);
+    font-weight: 600;
+  }
+  .footnotes a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--bleed);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    font-weight: 500;
+  }
+  .footnotes a:hover { color: var(--bleed); }
+  .footnotes strong { color: var(--ink); font-weight: 600; }
+
+  /* ── colophon (closing) ────────────────────── */
+  .colophon {
+    margin-top: 80px;
+    padding: 60px 28px 90px;
+    text-align: center;
+    border-top: 4px double var(--ink);
+    background: var(--paper-2);
+    position: relative;
+    z-index: 2;
+  }
+  .colophon .ornament {
+    font-family: var(--serif);
+    font-size: 32px;
+    color: var(--bleed);
+    margin-bottom: 22px;
+    letter-spacing: 0.4em;
+  }
+  .colophon h2 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    margin: 0 0 22px;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .colophon h2 em {
+    font-style: italic;
+    color: var(--bleed);
+    font-weight: 400;
+  }
+  .colophon p {
+    max-width: 56ch;
+    margin: 0 auto 14px;
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .colophon .sig {
+    margin-top: 36px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .colophon .sig::before { content: '— '; }
+
+  /* ── reveal on scroll ──────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── edit-mode controls ────────────────────── */
+  .edit-tools {
+    position: fixed;
+    top: 50px;
+    right: 24px;
+    z-index: 200;
+    display: flex;
+    gap: 8px;
+  }
+  .edit-tools button {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 9px 14px;
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s, transform 0.15s;
+  }
+  .edit-tools button:hover {
+    background: var(--ink);
+    color: var(--paper);
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--bleed);
+  }
+  .edit-tools button.active {
+    background: var(--bleed);
+    color: var(--paper);
+    border-color: var(--bleed);
+  }
+  .edit-tools .save-btn {
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  body.edit-mode .edit-tools .save-btn {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  body.edit-mode .edit-tools .save-btn.has-changes {
+    background: var(--bleed);
+    color: var(--paper);
+    border-color: var(--bleed);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(184, 18, 26, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(184, 18, 26, 0); }
+  }
+  /* visual affordance for editable zones */
+  body.edit-mode [contenteditable="true"] {
+    cursor: text;
+    transition: background 0.15s, outline 0.15s;
+  }
+  body.edit-mode [contenteditable="true"]:hover {
+    background: rgba(184, 18, 26, 0.04);
+    outline: 1px dashed rgba(184, 18, 26, 0.4);
+    outline-offset: 3px;
+  }
+  body.edit-mode [contenteditable="true"]:focus {
+    background: rgba(184, 18, 26, 0.06);
+    outline: 2px solid var(--bleed);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px rgba(184, 18, 26, 0.08);
+  }
+  /* hide edit tools when printing or saved */
+  @media print {
+    .edit-tools, .top, .chapter-rail { display: none !important; }
+  }
+
+  /* ── back to top fab ───────────────────────── */
+  .top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .top.visible { opacity: 1; pointer-events: auto; }
+  .top:hover { background: var(--bleed); }
+  .top svg { width: 16px; height: 16px; }
+</style>
+</head>
+<body class="">
+
+<!-- chapter rail -->
+<nav class="chapter-rail">
+  <span class="left">The Dandridge Audit</span>
+  <span class="right" id="rail-section">§ The Five</span>
+  <span class="progress-line" id="progress" style="width: 30.5043%;"></span>
+</nav>
+
+<!-- masthead -->
+<header class="masthead">
+  <div class="kicker" contenteditable="false">Vol. I &nbsp;·&nbsp; Issue 1 &nbsp;·&nbsp; For espeedy gonzalez</div>
+  <h1 contenteditable="false">The Dandridge <em>Audit</em></h1>
+  <p class="deck" contenteditable="false">a friendly-but-thorough walkthrough of <span style="font-family:var(--mono);font-size:0.85em;">voterickeyrdandridgeforsheriff.vote</span></p>
+  <div class="byline" contenteditable="false">A Website Review · bitch</div>
+  <a class="jump" href="#priorities">skip to the five real things →</a>
+</header>
+
+<!-- ─── 01 · Findings at a glance ─── -->
+<section class="spread" id="overview" data-section="At a glance">
+  <span class="section-num" contenteditable="false">§ 01 — At a Glance</span>
+  <h2 class="section-title" contenteditable="false">A campaign site that's <em>almost there</em>.</h2>
+  <p class="section-deck" contenteditable="false">The candidate himself looks great on the page. 44 years of service, real address, real photos, real disclaimers, all good. The site is just missing the parts that ask voters to actually <em>do</em> something, which is, you know, the whole point of a campaign site.</p>
+
+  <div class="stats reveal in">
+    <div class="stat reveal in">
+      <span class="cap" contenteditable="false">Already there</span>
+      <span class="big" contenteditable="false">70<span style="color:var(--muted);font-size:0.5em;vertical-align:0.4em;">%</span></span>
+      <p class="gloss" contenteditable="false">of a real campaign site, the bones are in place.</p>
+    </div>
+    <div class="stat bleed reveal in">
+      <span class="cap" contenteditable="false">Need attention</span>
+      <span class="big" contenteditable="false">5</span>
+      <p class="gloss" contenteditable="false">things really worth fixing sooner than later.</p>
+    </div>
+    <div class="stat gold reveal in">
+      <span class="cap" contenteditable="false">Estimated work</span>
+      <span class="big" contenteditable="false">½ day</span>
+      <p class="gloss" contenteditable="false">I could do it in like 4 minutes tho</p>
+    </div>
+  </div>
+
+  <div class="pullquote reveal in">
+    <p contenteditable="false">At first glance it looks like a campaign site. After 30 seconds it's clearly a <em>biography site</em>. Donate page is FUCKED<br>can't use that shiet, bro gon stay broke af forever. Also there's nothing about what he'd do as a sheriff it's all just golf and fishing.</p>
+    <span class="attr" contenteditable="false">The TLDR</span>
+  </div>
+</section>
+
+<!-- ─── 02 · Health ledger ─── -->
+<section class="spread" id="health" data-section="The Ledger">
+  <span class="section-num" contenteditable="false">§ 02 — The Ledger</span>
+  <h2 class="section-title" contenteditable="false">Eight categories, <em>scored.</em></h2>
+  <p class="section-deck" contenteditable="false">Where the site stands today, by area. Anything in the green is fine. Anything in the red is an L moment.</p>
+
+  <div class="ledger reveal in" id="ledger">
+    <div class="ledger-row good" data-pct="95"><span class="idx">01</span><span class="area reveal in" contenteditable="false">Candidate identity</span><span class="meter"><span class="meter-fill" style="width: 95%;"></span></span><span class="pct" contenteditable="false">95%</span></div>
+    <div class="ledger-row fine" data-pct="75"><span class="idx">02</span><span class="area reveal in" contenteditable="false">Contact information</span><span class="meter"><span class="meter-fill" style="width: 75%;"></span></span><span class="pct" contenteditable="false">75%</span></div>
+    <div class="ledger-row fine" data-pct="65"><span class="idx">03</span><span class="area reveal in" contenteditable="false">Visual design</span><span class="meter"><span class="meter-fill" style="width: 65%;"></span></span><span class="pct" contenteditable="false">65%</span></div>
+    <div class="ledger-row fine" data-pct="55"><span class="idx">04</span><span class="area reveal in" contenteditable="false">Mobile experience</span><span class="meter"><span class="meter-fill" style="width: 55%;"></span></span><span class="pct" contenteditable="false">55%</span></div>
+    <div class="ledger-row fine" data-pct="45"><span class="idx">05</span><span class="area reveal in" contenteditable="false">Accessibility &amp; SEO</span><span class="meter"><span class="meter-fill" style="width: 45%;"></span></span><span class="pct" contenteditable="false">45%</span></div>
+    <div class="ledger-row poor" data-pct="10"><span class="idx">06</span><span class="area reveal in" contenteditable="false">"What I'll do" platform</span><span class="meter"><span class="meter-fill" style="width: 10%;"></span></span><span class="pct" contenteditable="false">10%</span></div>
+    <div class="ledger-row poor" data-pct="0"><span class="idx">07</span><span class="area reveal in" contenteditable="false">Donations &amp; fundraising</span><span class="meter"><span class="meter-fill" style="width: 0%;"></span></span><span class="pct" contenteditable="false">0%</span></div>
+    <div class="ledger-row poor" data-pct="0"><span class="idx">08</span><span class="area reveal in" contenteditable="false">Voter information</span><span class="meter"><span class="meter-fill" style="width: 0%;"></span></span><span class="pct" contenteditable="false">0%</span></div>
+  </div>
+</section>
+
+<!-- ─── 03 · The Five (chapters) ─── -->
+<section class="spread" id="priorities" data-section="The Five">
+  <span class="section-num" contenteditable="false">§ 03 — The Five</span>
+  <h2 class="section-title" contenteditable="false">Five things <em>worth the time.</em></h2>
+  <p class="section-deck" contenteditable="false">If only five things change on the site, these are the five. Three are genuinely critical, two are high-priority. None of them require a redesign.</p>
+
+  <article class="chapter critical reveal in">
+    <div class="chapter-num" contenteditable="false">01.</div>
+    <div class="chapter-body">
+      <span class="chapter-tag" contenteditable="false">Critical · 2 hrs setup</span>
+      <h3 contenteditable="false">Get the donate button working.</h3>
+      <p contenteditable="false">The "Help Elect Rickey" page repeats the phrase <em>"Donation and sponsorship options coming soon!"</em> several times, and the "DONATE" heading on the page doesn't actually link to a working donation flow which is a bit of a problem. I'd personally gate this off or give a real timeline of when the options should be available until it is working but thats just me.&nbsp;</p>
+      <p contenteditable="false">So basically anyone who shows up wanting to donate just <strong>can't</strong>. The campaign should get an Anedot or WinRed page set up (whichever Virginia rules allow) and link to it from the homepage and every page footer. <font color="#8e0d14"><i>Tell em to bring me my money...</i></font></p>
+    </div>
+  </article>
+
+  <article class="chapter critical reveal in">
+    <div class="chapter-num" contenteditable="false">02.</div>
+    <div class="chapter-body">
+      <span class="chapter-tag" contenteditable="false">Critical · 4-6 hrs writing</span>
+      <h3 contenteditable="false">Add a "what I'll do as sheriff" page.</h3>
+      <p contenteditable="false">Right now the site mostly says Rickey is experienced, ethical, fair, etc, which is all true and important. But there's nothing about what he'd actually <em>do</em> once in office. The whole site is a long résumé in 7 different fonts.</p>
+      <p contenteditable="false">Voters wanna know the real stuff, like school safety, deputy retention, drug enforcement, mental-health response, that kind of thing. A <strong>Priorities page</strong> with 4-6 specific positions (maybe like 2-3 sentences each) would be the single biggest thing missing from the site. It doesn't need to be a novel, just give people something to point at.</p>
+    </div>
+  </article>
+
+  <article class="chapter critical reveal in">
+    <div class="chapter-num" contenteditable="false">03.</div>
+    <div class="chapter-body">
+      <span class="chapter-tag" contenteditable="false">Critical · 15 min</span>
+      <h3 contenteditable="false">Fix the phone number mismatch.</h3>
+      <p contenteditable="false">The contact page lists <code>804-396-0536</code>. The downloadable resume PDF lists <code>(804) 310-5452</code>. Those are two different numbers, so one of them is wrong.</p>
+      <p contenteditable="false">Pick whichever is the real campaign line and update everywhere, contact page, resume PDF, social profiles, all the same day. <em>Voters who try to call the wrong one are going to be annoyed. Voters who try BOTH are going to be confused AND annoyed.</em></p>
+    </div>
+  </article>
+
+  <article class="chapter high reveal in">
+    <div class="chapter-num" contenteditable="false">04.</div>
+    <div class="chapter-body">
+      <span class="chapter-tag" contenteditable="false">High · 5 min</span>
+      <h3 contenteditable="false">Fix the "Colonial Hines" typo.</h3>
+      <p contenteditable="false">On the Leadership &amp; Values page, there's a photo caption that reads <em>"Photo is the ceremony when Rickey was promoted to Major. Pictured are his son, daughter, and Colonial Hines."</em></p>
+      <p contenteditable="false">The actual name is <strong>Colonel David R. Hines</strong> (per the Hanover County Sheriff's Office and the Virginia Sheriffs' Association). Misspelling a respected former sheriff's title in a photo caption on a website about wanting to be the next one is some Parker level bs to say the least.</p>
+    </div>
+  </article>
+
+  <article class="chapter high reveal in">
+    <div class="chapter-num" contenteditable="false">05.</div>
+    <div class="chapter-body">
+      <span class="chapter-tag" contenteditable="false">High · 1 hr</span>
+      <h3 contenteditable="false">Build a voting info page.</h3>
+      <p contenteditable="false">There's no "Voting Information" page anywhere on the site. Should have the <strong>November 3, 2026</strong> special-election date, the registration deadline, a polling-place link to <code>elections.virginia.gov</code>, and the absentee/early-voting info.</p>
+      <p contenteditable="false"><em>&nbsp;I already did enough research myself on this so I couldnt be bothered to find the actual links and stuff.</em></p>
+    </div>
+  </article>
+</section>
+
+<!-- ─── 04 · Quick wins ─── -->
+<section class="spread" id="quick-wins" data-section="Quick Wins">
+  <span class="section-num" contenteditable="false">§ 04 — Quick Wins</span>
+  <h2 class="section-title" contenteditable="false">An afternoon evening's night worth, <em>checked off.</em></h2>
+  <p class="section-deck" contenteditable="false">Every single one of these takes under an hour. Most take under five minutes. Click the boxes if you wanna feel the satisfaction, I added that for you specifically because I'm awesome, it saves too, try it out.</p>
+
+  <div class="checklist">
+    <div class="checklist-row" onclick="this.classList.toggle('done')">
+      <div class="box"></div>
+      <div class="text" contenteditable="false">fix the <strong>"Colonial Hines"</strong> → "Colonel David R. Hines" typo on the Leadership &amp; Values page</div>
+    </div>
+    <div class="checklist-row" onclick="this.classList.toggle('done')">
+      <div class="box"></div>
+      <div class="text" contenteditable="false">pick one campaign phone number, update the site, the resume PDF, and social profiles</div>
+    </div>
+    <div class="checklist-row" onclick="this.classList.toggle('done')">
+      <div class="box"></div>
+      <div class="text" contenteditable="false">replace every <strong>"Click here to learn more…"</strong> link with descriptive text. it appears <strong>six times</strong> on the homepage. six. somebody got tired halfway through and stopped trying</div>
+    </div>
+    <div class="checklist-row" onclick="this.classList.toggle('done')">
+      <div class="box"></div>
+      <div class="text" contenteditable="false">turn off the <strong>"TrustedSite Certified"</strong> floating badge in the bottom-left corner. it's a GoDaddy site-builder feature, not an endorsement, it doesn't even render properly and a voter glancing at it might think the campaign got certified by something. they did not. it's the website equivalent of those "as seen on TV" badges from 2007</div>
+    </div>
+    <div class="checklist-row" onclick="this.classList.toggle('done')">
+      <div class="box"></div>
+      <div class="text" contenteditable="false">promote <strong>"Volunteer Sign-Up"</strong> out of the "More" menu and into the top-level nav</div>
+    </div>
+    <div class="checklist-row" onclick="this.classList.toggle('done')">
+      <div class="box"></div>
+      <div class="text" contenteditable="false">add <strong>"Special Election · Tuesday, November 3, 2026"</strong> to the footer with a link to <code>elections.virginia.gov</code></div>
+    </div>
+    <div class="checklist-row" onclick="this.classList.toggle('done')">
+      <div class="box"></div>
+      <div class="text" contenteditable="false">fix the "Connect with Rickey" section, the blue Facebook link on red literally hurts to look at. white text on the red, or move the link off the red panel entirely</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 05 · By area (filterable) ─── -->
+<section class="spread" id="areas" data-section="By Area">
+  <span class="section-num" contenteditable="false">§ 05 — By Area</span>
+  <h2 class="section-title" contenteditable="false">The rest of it, <em>page by page.</em></h2>
+  <p class="section-deck" contenteditable="false">Filter by severity to see what's worth tackling at each level. Critical first, then on down. you don't have to read the whole thing i'm not your professor.</p>
+
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-filter="all">All <span class="count">10</span></button>
+    <button class="filter-btn" data-filter="critical">Critical <span class="count">1</span></button>
+    <button class="filter-btn" data-filter="high">High <span class="count">2</span></button>
+    <button class="filter-btn" data-filter="medium">Medium <span class="count">5</span></button>
+    <button class="filter-btn" data-filter="low">Low <span class="count">2</span></button>
+  </div>
+
+  <div class="area-grid" id="area-grid">
+
+    <div class="area critical reveal in" data-sev="critical" contenteditable="false">
+      <div class="area-head">
+        <h4 contenteditable="false">Help Elect Rickey page</h4>
+        <span class="area-tag">Critical</span>
+      </div>
+      <ul>
+        <li contenteditable="false"><em>"Donation and sponsorship options coming soon!"</em> appears repeatedly on the page</li>
+        <li contenteditable="false">the "Donate" heading doesn't link to an actual donation flow</li>
+        <li contenteditable="false">set up the donation processor first (Anedot is the standard for VA local races), then replace the "coming soon" message with a real working donate button</li>
+      </ul>
+    </div>
+
+    <div class="area high reveal in" data-sev="high" contenteditable="false">
+      <div class="area-head">
+        <h4 contenteditable="false">Visual design &amp; consistency</h4>
+        <span class="area-tag">High</span>
+      </div>
+      <ul>
+        <li contenteditable="false">the six "Synopsis" tiles on the homepage seem to use placeholder graphic GIFs instead of real photos</li>
+        <li contenteditable="false"><strong>"Serving Hanover for more than 44 years..."</strong> appears as the heading on multiple unrelated tiles, looks like a copy-paste leftover</li>
+        <li contenteditable="false">headings switch between sentence case, ALL CAPS, and Title Case all over the place. it's like four different people wrote this site and never spoke to each other. pick one style and apply it everywhere</li>
+        <li contenteditable="false">basically only one real styled button on the entire site (the contact form's SEND). every other action is a tiny underlined "Click here to learn more…" link. the site is allergic to telling you what to do</li>
+        <li contenteditable="false">the favicon is literally a file called <code>Screenshot 2026-02-04 114431.png</code>. somebody snapped it once on a Tuesday in February and it has lived there ever since without even working. should be a real designed favicon, even just <strong>"RD"</strong> on a navy background</li>
+      </ul>
+    </div>
+
+    <div class="area high reveal in" data-sev="high" contenteditable="false">
+      <div class="area-head">
+        <h4 contenteditable="false">Accessibility</h4>
+        <span class="area-tag">High</span>
+      </div>
+      <ul>
+        <li contenteditable="false">the "Connect with Rickey" section has a blue Facebook link sitting on a red background. the letters look like they're bouncing. <em>this is a real visual thing called chromatic aberration, not just preference, it physically hurts to look at.</em> use white text on the red instead</li>
+        <li contenteditable="false">some body text is mid-gray on white, hard for older voters to read. should be near-black</li>
+        <li contenteditable="false">six identical "Click here to learn more…" links are bad for screen readers</li>
+        <li contenteditable="false">verify every photo has real alt text in the GoDaddy editor</li>
+      </ul>
+    </div>
+
+    <div class="area medium reveal in" data-sev="medium" contenteditable="false">
+      <div class="area-head">
+        <h4 contenteditable="false">Homepage / hero</h4>
+        <span class="area-tag">Medium</span>
+      </div>
+      <ul>
+        <li contenteditable="false">tells you who's running, but no buttons telling you what to do next. the hero needs <strong>2-3 CTAs</strong> (Volunteer / Donate / Read Priorities)</li>
+        <li contenteditable="false">the entire headline is baked into a single banner image instead of being real text. Google can't read it, screen readers can't read it, and the campaign can't update the wording without redoing the whole image</li>
+        <li contenteditable="false">the headline within that image is stacked weird, "ELECT" / "Rickey R." / "DANDRIDGE" each on its own line, choppy. one tighter line would work better</li>
+      </ul>
+    </div>
+
+    <div class="area medium reveal in" data-sev="medium" contenteditable="false">
+      <div class="area-head">
+        <h4 contenteditable="false">Navigation</h4>
+        <span class="area-tag">Medium</span>
+      </div>
+      <ul>
+        <li contenteditable="false"><strong>"Volunteer Sign-Up"</strong> is hidden under "More", should be top-level</li>
+        <li contenteditable="false">"About Rickey" submenu has 8 items, that's overload, could be 2-3</li>
+        <li contenteditable="false">no "Issues" or "Voting Info" page in the menu at all</li>
+      </ul>
+    </div>
+
+    <div class="area medium reveal in" data-sev="medium" contenteditable="false">
+      <div class="area-head">
+        <h4 contenteditable="false">Mobile experience</h4>
+        <span class="area-tag">Medium</span>
+      </div>
+      <ul>
+        <li contenteditable="false">the volunteer form is loaded inside an iframe with its own scroll bar. on phones this creates a "scroll within scroll" feel that's frustrating</li>
+        <li contenteditable="false">homepage hero stacks really tall, pushes "why vote for me" content way below the fold</li>
+        <li contenteditable="false">the "Help Elect Rickey" tiles look tappable but do nothing, feels broken. tapping a thing and getting nothing back is the worst possible mobile experience, voters will close the tab</li>
+      </ul>
+    </div>
+
+    <div class="area medium reveal in" data-sev="medium" contenteditable="false">
+      <div class="area-head">
+        <h4 contenteditable="false">SEO &amp; sharing</h4>
+        <span class="area-tag">Medium</span>
+      </div>
+      <ul>
+        <li contenteditable="false">most page titles are bare ("Press Release", "Contact Us", "Education") with no campaign context. append <strong>"| Rickey R. Dandridge for Hanover County Sheriff"</strong> to every page title</li>
+        <li contenteditable="false">add local keywords ("Mechanicsville", "Ashland", "Hanover Courthouse") to the homepage copy</li>
+        <li contenteditable="false">Open Graph image is currently the banner with stacked text baked in. set <code>og:image</code> to a clean candidate photo</li>
+        <li contenteditable="false">URL slugs are a mess — some <code>-1</code> slugs are canonical, others are duplicates of real pages. needs a cleanup pass</li>
+      </ul>
+    </div>
+
+    <div class="area medium reveal in" data-sev="medium" contenteditable="false">
+      <div class="area-head">
+        <h4 contenteditable="false">Third-party widgets &amp; trust</h4>
+        <span class="area-tag">Medium</span>
+      </div>
+      <ul>
+        <li contenteditable="false">the <strong>"TrustedSite Certified"</strong> badge in the bottom-left of every page is loaded from a third-party script. it's a GoDaddy builder feature, not a campaign endorsement</li>
+        <li contenteditable="false"><strong>"Powered by GoDaddy"</strong> in every single footer is genuinely embarrassing for a sheriff campaign. plan upgrade or migrate to remove. nobody trusts a candidate whose website is technically still a free trial</li>
+        <li contenteditable="false">only Facebook is linked under social, add Instagram if it exists</li>
+        <li contenteditable="false">no endorsements page, even 3-5 named supporters with photos would be a credibility boost</li>
+      </ul>
+    </div>
+
+    <div class="area low reveal in" data-sev="low" contenteditable="false">
+      <div class="area-head">
+        <h4 contenteditable="false">About / bio pages</h4>
+        <span class="area-tag">Low</span>
+      </div>
+      <ul>
+        <li contenteditable="false">content is solid, 44 years, every rank, awards, community involvement. credible résumé</li>
+        <li contenteditable="false">each subpage is short (50-150 words), feels thin, could consolidate into one richer About page with anchor links</li>
+        <li contenteditable="false">some acronyms appear without being spelled out ("ASAP" and "WRVA" on the Awards page). worth a quick pass to spell them out the first time</li>
+      </ul>
+    </div>
+
+    <div class="area low reveal in" data-sev="low" contenteditable="false">
+      <div class="area-head">
+        <h4 contenteditable="false">Contact &amp; performance</h4>
+        <span class="area-tag">Low</span>
+      </div>
+      <ul>
+        <li contenteditable="false">strongest page on the site, real address, phone, email, working form</li>
+        <li contenteditable="false">switch the campaign email from gmail to <code>info@voterickeyrdandridgeforsheriff.vote</code>, 5-min upgrade, looks more legit</li>
+        <li contenteditable="false">add a subject-line dropdown to the form so the campaign can triage incoming messages</li>
+        <li contenteditable="false">pages load reasonably fast on desktop. the hero banner is served larger than needed though, compress for mobile</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── 06 · Suggested copy ─── -->
+<section class="spread" id="copy" data-section="Suggested Copy">
+  <span class="section-num" contenteditable="false">§ 06 — Suggested Copy</span>
+  <h2 class="section-title" contenteditable="false">Words that <em>land harder.</em></h2>
+  <p class="section-deck" contenteditable="false">Three places where a small wording change makes the page feel like a campaign instead of a really long obituary that the guy is somehow still alive for.</p>
+
+  <div class="spreads">
+
+    <div class="copy-spread reveal in">
+      <h4 contenteditable="false">The hero headline</h4>
+      <div class="ba">
+        <div class="ba-pane before" contenteditable="false">
+          <span class="lab">On the site now</span>
+          ELECT<br>Rickey R.<br>DANDRIDGE<br>Put 44 years experience<br>to work for you.
+        </div>
+        <div class="ba-pane after" contenteditable="false">
+          <span class="lab">Try this</span>
+          <strong>Experience. Integrity. Service.</strong><br>
+          Rickey R. Dandridge for Hanover County Sheriff. 44 years of Hanover, ready on day one.<br><br>
+          <em>[ Volunteer ]&nbsp;&nbsp;[ Donate ]&nbsp;&nbsp;[ Read My Priorities ]</em><br><br>
+          <span style="font-size:12px;color:var(--muted);font-family:var(--mono);">Special Election · Tuesday, November 3, 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="copy-spread reveal in">
+      <h4 contenteditable="false">"Why I'm running"</h4>
+      <div class="ba">
+        <div class="ba-pane before" contenteditable="false">
+          <span class="lab">Currently</span>
+          one long block, mixing first-person and third-person voice, ~80 words without paragraph breaks
+        </div>
+        <div class="ba-pane after" contenteditable="false">
+          <span class="lab">Try this</span>
+          I live in Hanover. I worked here for 44 years, every rank, every division of the Sheriff's Office, from patrol deputy to Major. I'm running because Hanover deserves a sheriff who already knows this office, this community, and the work it takes to keep both safe.<br><br>
+          As your Sheriff, I'll lead with experience, integrity, and accountability, and put every one of those 44 years to work for you.<br><br>
+          I'm asking for your vote on November 3, 2026.
+        </div>
+      </div>
+    </div>
+
+    <div class="copy-spread reveal in">
+      <h4 contenteditable="false">The "Click here" links</h4>
+      <div class="ba">
+        <div class="ba-pane before" contenteditable="false">
+          <span class="lab">Currently, same text 6×</span>
+          Click here to learn more…<br>
+          Click here to learn more…<br>
+          Click here to learn more…<br>
+          Click here to learn more…<br>
+          Click here to learn more…<br>
+          Click here to learn more…
+        </div>
+        <div class="ba-pane after" contenteditable="false">
+          <span class="lab">Try this — descriptive</span>
+          Read Rickey's full career →<br>
+          See his education →<br>
+          View training &amp; certifications →<br>
+          See his awards →<br>
+          Read about his community work →<br>
+          Meet Rickey off duty →
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 07 · Timeline ─── -->
+<section class="spread" id="timeline" data-section="Timeline">
+  <span class="section-num" contenteditable="false">§ 07 — A Plan</span>
+  <h2 class="section-title" contenteditable="false">When to do <em>what.</em></h2>
+  <p class="section-deck" contenteditable="false">Organized by how soon each fix actually pays off. Click between the three windows below. the "today" stuff is genuinely 90 minutes of work for the whole list and would close the door on the dumbest of the issues.</p>
+
+  <div class="timeline-tabs" id="timeline-tabs">
+    <button class="timeline-tab active" data-list="t-today"><span class="when">Today</span>under one hour</button>
+    <button class="timeline-tab" data-list="t-week"><span class="when">This Week</span>focused day or two</button>
+    <button class="timeline-tab" data-list="t-later"><span class="when">Later</span>before november</button>
+  </div>
+
+  <ul class="timeline-list active" id="t-today">
+    <li contenteditable="false">fix the <strong>"Colonial Hines"</strong> → "Colonel David R. Hines" typo</li>
+    <li contenteditable="false">standardize the campaign phone number across the site, the resume PDF, and social</li>
+    <li contenteditable="false">replace <strong>"Click here to learn more…"</strong> links with descriptive text</li>
+    <li contenteditable="false">turn off the "TrustedSite Certified" badge</li>
+    <li contenteditable="false">promote "Volunteer Sign-Up" to the top-level nav</li>
+    <li contenteditable="false">add the November 3, 2026 election date to the footer with a link to <code>elections.virginia.gov</code></li>
+  </ul>
+
+  <ul class="timeline-list" id="t-week">
+    <li contenteditable="false">set up <strong>donation processing</strong> (Anedot/WinRed/ActBlue per VA rules) and link it from the homepage and Help Elect Rickey page</li>
+    <li contenteditable="false">build a <strong>Priorities / Issues page</strong> with 4-6 specific issue areas</li>
+    <li contenteditable="false">build a <strong>Voting Info page</strong> (Nov 3 election + registration + polling places)</li>
+    <li contenteditable="false">add hero CTA buttons (Volunteer / Donate / Read Priorities)</li>
+    <li contenteditable="false">switch campaign email to a domain address. add an email-list capture in the footer</li>
+    <li contenteditable="false">append <strong>"| Rickey R. Dandridge for Hanover County Sheriff"</strong> to every page title. set the Open Graph image</li>
+  </ul>
+
+  <ul class="timeline-list" id="t-later">
+    <li contenteditable="false">build an <strong>Endorsements</strong> page. recruit and publish 5-10 named endorsements with photos</li>
+    <li contenteditable="false">replace the GoDaddy header logo with a real campaign wordmark/seal</li>
+    <li contenteditable="false">consolidate the 7 About sub-pages into one richer page with anchor links</li>
+    <li contenteditable="false">replace the volunteer form iframe with a native embed so it doesn't have its own scrollbar</li>
+    <li contenteditable="false">set up a <strong>News / Press</strong> page that grows with each release and media mention</li>
+    <li contenteditable="false">upgrade the GoDaddy plan or migrate to remove the "Powered by GoDaddy" footer</li>
+    <li contenteditable="false">add Instagram / X if the campaign is on those. add Share buttons on every page</li>
+    <li contenteditable="false">set up Google Search Console and submit a sitemap</li>
+  </ul>
+</section>
+
+<!-- ─── 08 · Sources ─── -->
+<section class="spread" id="sources" data-section="Sources">
+  <span class="section-num" contenteditable="false">§ 08 — Sources &amp; Citations</span>
+  <h2 class="section-title" contenteditable="false">Where the <em>facts come from.</em></h2>
+  <p class="section-deck" contenteditable="false">Every specific claim in the audit traces back to one of these. If anybody asks where i got it, here are the receipts. i didn't just make stuff up, i'm not a hater.</p>
+
+  <div class="footnotes">
+    <ol>
+      <li contenteditable="false">
+        <strong><a href="https://law.lis.virginia.gov/vacode/title24.2/chapter9.5/section24.2-956/" target="_blank" rel="noopener">Virginia Code § 24.2-956</a></strong> — requirements for print and electronic campaign-ad disclaimers. The campaign's existing <em>"PAID FOR AND AUTHORIZED BY RICKEY R. DANDRIDGE FOR SHERIFF"</em> disclaimer is fully compliant, no treasurer name required for written or online materials.
+      </li>
+      <li contenteditable="false">
+        <strong><a href="https://www.hanoversheriff.com/276/Colonel-David-R-Hines-Sheriff" target="_blank" rel="noopener">Hanover County Sheriff's Office</a></strong> — confirmed the correct title and name <em>"Colonel David R. Hines"</em> (the photo caption misspell on the Leadership &amp; Values page).
+      </li>
+      <li contenteditable="false">
+        <strong><a href="https://vasheriff.org/2026/01/07/colonel-david-r-hines-announces-retirement/" target="_blank" rel="noopener">Virginia Sheriffs' Association</a></strong> — same name confirmation, with retirement announcement context.
+      </li>
+      <li contenteditable="false">
+        <strong><a href="https://www.elections.virginia.gov/" target="_blank" rel="noopener">elections.virginia.gov</a></strong> — the official Virginia Department of Elections site, for polling-place lookup, registration deadline, and absentee/early-voting information that should be linked from the new Voting Info page.
+      </li>
+      <li contenteditable="false">
+        <strong>Hanover County Voter Registration: <a href="tel:8043656080">804-365-6080</a></strong> — for confirming the November 3, 2026 special-election date directly with the office before publishing it on the site.
+      </li>
+      <li contenteditable="false">
+        <strong><a href="https://anedot.com/" target="_blank" rel="noopener">Anedot</a> · <a href="https://winred.com/" target="_blank" rel="noopener">WinRed</a> · <a href="https://secure.actblue.com/" target="_blank" rel="noopener">ActBlue</a></strong> — the standard donation processors for Virginia local campaigns. Pick one based on the campaign's party affiliation and treasurer's preference.
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ─── colophon ─── -->
+<section class="colophon">
+  <div class="ornament" contenteditable="false">❦ ❦ ❦</div>
+  <h2 contenteditable="false">okay actually <em>real talk</em> for a sec.</h2>
+  <p contenteditable="false">the bones are decent you guys just need someone in there with some actual design chops. a lot of the issues are mostly copy problems and a couple poor color/font choices.</p>
+  <p contenteditable="false">There are a lot of missing active-campaign things (donate, priorities, voting info, email list) and I'm not sure what the timeline for those would have to be so really i probably didn't need to mention them but i did anyways.</p>
+  <p contenteditable="false">Take what's useful, ignore what's not, and lmk if you want me to actually mock up any of the page changes or take a swing at a redesign.</p>
+  <div class="sig" contenteditable="false">— your friend who has too much free time · May 14, 2026</div>
+</section>
+
+<!-- edit-mode floating tools -->
+<div class="edit-tools">
+  <button id="edit-btn" class="edit-btn" title="Toggle edit mode">✎ Edit</button>
+  <button id="save-btn" class="save-btn has-changes" title="Download an HTML copy with your edits">💾 Save copy</button>
+</div>
+
+<!-- back-to-top -->
+<button class="top visible" id="top-btn" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 15l7-7 7 7"></path></svg>
+</button>
+
+<script>
+(function() {
+  // ── progress bar + section indicator
+  const progress = document.getElementById('progress');
+  const railSection = document.getElementById('rail-section');
+  const topBtn = document.getElementById('top-btn');
+
+  function onScroll() {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    progress.style.width = pct + '%';
+    topBtn.classList.toggle('visible', h.scrollTop > 600);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // ── chapter rail tracker
+  const sections = document.querySelectorAll('[data-section]');
+  const trackerObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        railSection.textContent = '§ ' + e.target.dataset.section;
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => trackerObs.observe(s));
+
+  // ── reveal-on-scroll
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        revealObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal, .stat, .pullquote, .chapter, .area, .copy-spread').forEach(el => {
+    el.classList.add('reveal');
+    revealObs.observe(el);
+  });
+
+  // ── ledger meter fill on scroll-into-view
+  const ledger = document.getElementById('ledger');
+  const ledgerObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        ledger.querySelectorAll('.ledger-row').forEach((row, i) => {
+          const pct = row.dataset.pct;
+          setTimeout(() => {
+            row.querySelector('.meter-fill').style.width = pct + '%';
+          }, i * 90);
+        });
+        ledgerObs.unobserve(ledger);
+      }
+    });
+  }, { threshold: 0.3 });
+  if (ledger) ledgerObs.observe(ledger);
+
+  // ── area filter
+  const filterBar = document.getElementById('filter-bar');
+  const areaGrid = document.getElementById('area-grid');
+  if (filterBar) {
+    filterBar.addEventListener('click', (e) => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      areaGrid.querySelectorAll('.area').forEach(a => {
+        a.classList.toggle('hidden', f !== 'all' && a.dataset.sev !== f);
+      });
+    });
+  }
+
+  // ── timeline tabs
+  const timelineTabs = document.getElementById('timeline-tabs');
+  if (timelineTabs) {
+    timelineTabs.addEventListener('click', (e) => {
+      const btn = e.target.closest('.timeline-tab');
+      if (!btn) return;
+      timelineTabs.querySelectorAll('.timeline-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.timeline-list').forEach(l => l.classList.remove('active'));
+      document.getElementById(btn.dataset.list).classList.add('active');
+    });
+  }
+
+  // ── live edit mode ────────────────────────────
+  // Selectors that should become contenteditable in edit mode
+  // (skip interactive controls like buttons + filter pills + tab buttons + checklist boxes)
+  const EDITABLE = [
+    'p', 'li',
+    'h1', 'h2', 'h3', 'h4',
+    '.deck', '.section-deck',
+    '.gloss', '.cap', '.big',
+    '.section-title', '.section-num',
+    '.kicker', '.byline',
+    '.area', '.pct',
+    '.pullquote p', '.pullquote .attr',
+    '.chapter h3', '.chapter-tag', '.chapter-num',
+    '.ba-pane',
+    '.copy-spread h4',
+    '.sig', '.ornament',
+    '.checklist-row .text',
+    '.area-head h4',
+    '.area ul li',
+    '.timeline-list li'
+  ].join(', ');
+
+  const editBtn  = document.getElementById('edit-btn');
+  const saveBtn  = document.getElementById('save-btn');
+  let hasChanges = false;
+
+  function setEditMode(on) {
+    document.body.classList.toggle('edit-mode', on);
+    document.querySelectorAll(EDITABLE).forEach(el => {
+      // Don't make things inside interactive widgets editable
+      if (el.closest('.filter-btn') || el.closest('.timeline-tab')) return;
+      el.contentEditable = on ? 'true' : 'false';
+    });
+    editBtn.textContent = on ? '✓ Editing' : '✎ Edit';
+    editBtn.classList.toggle('active', on);
+  }
+
+  editBtn.addEventListener('click', () => {
+    setEditMode(!document.body.classList.contains('edit-mode'));
+  });
+
+  // Mark changes when typing
+  document.addEventListener('input', (e) => {
+    if (!document.body.classList.contains('edit-mode')) return;
+    if (!e.target.isContentEditable) return;
+    hasChanges = true;
+    saveBtn.classList.add('has-changes');
+  });
+
+  // Save button: download a self-contained HTML file with current edits
+  saveBtn.addEventListener('click', () => {
+    // Reset contenteditable so the saved file is "clean" (recipients can re-enable edit if they want)
+    const wasEdit = document.body.classList.contains('edit-mode');
+    if (wasEdit) setEditMode(false);
+
+    // Snapshot current DOM
+    const snapshot = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const blob = new Blob([snapshot], { type: 'text/html;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    const stamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12);
+    a.href = url;
+    a.download = `dandridge-audit-${stamp}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    // Restore edit mode if it was on
+    if (wasEdit) setEditMode(true);
+
+    hasChanges = false;
+    saveBtn.classList.remove('has-changes');
+  });
+
+  // Warn before navigating away with unsaved edits
+  window.addEventListener('beforeunload', (e) => {
+    if (hasChanges) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  // Quality-of-life: Ctrl/Cmd+S triggers save while in edit mode
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+      if (document.body.classList.contains('edit-mode')) {
+        e.preventDefault();
+        saveBtn.click();
+      }
+    }
+  });
+})();
+</script>
+
+
+
+</body></html>
