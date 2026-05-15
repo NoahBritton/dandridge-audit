@@ -458,6 +458,7 @@
   .checklist-row:last-child { border-bottom: none; }
   .checklist-row:hover { background: var(--paper-2); }
   .checklist-row .box {
+    position: relative;
     border-right: 1px solid var(--rule);
     padding: 22px 0;
     text-align: center;
@@ -466,6 +467,35 @@
     color: var(--ink);
     font-weight: 700;
     transition: background 0.2s, color 0.2s;
+  }
+  @keyframes box-pop {
+    0%   { transform: scale(1);    box-shadow: 0 0 0 0   rgba(184, 134, 27, 0); }
+    35%  { transform: scale(1.18); box-shadow: 0 0 0 8px rgba(184, 134, 27, 0.35); }
+    100% { transform: scale(1);    box-shadow: 0 0 0 0   rgba(184, 134, 27, 0); }
+  }
+  @keyframes row-flash {
+    0%   { background: rgba(184, 134, 27, 0.22); }
+    100% { background: transparent; }
+  }
+  .checklist-row.celebrate .box { animation: box-pop 0.45s ease-out; }
+  .checklist-row.celebrate      { animation: row-flash 0.7s ease-out; }
+  .confetti {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 7px; height: 7px;
+    pointer-events: none;
+    border-radius: 1px;
+    z-index: 5;
+    animation: confetti-fly 0.75s cubic-bezier(.22,.61,.36,1) forwards;
+  }
+  @keyframes confetti-fly {
+    0%   { transform: translate(-50%, -50%) scale(0.6) rotate(0deg);                           opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1) rotate(var(--rot)); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .checklist-row.celebrate .box,
+    .checklist-row.celebrate { animation: none; }
+    .confetti { display: none; }
   }
   .checklist-row .text {
     padding: 22px 24px;
@@ -850,77 +880,8 @@
     transform: translateY(0);
   }
 
-  /* ── edit-mode controls ────────────────────── */
-  .edit-tools {
-    position: fixed;
-    top: 50px;
-    right: 24px;
-    z-index: 200;
-    display: flex;
-    gap: 8px;
-  }
-  .edit-tools button {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    padding: 9px 14px;
-    background: var(--card);
-    color: var(--ink);
-    border: 1px solid var(--ink);
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.2s, color 0.2s, transform 0.15s;
-  }
-  .edit-tools button:hover {
-    background: var(--ink);
-    color: var(--paper);
-    transform: translate(-1px, -1px);
-    box-shadow: 2px 2px 0 var(--bleed);
-  }
-  .edit-tools button.active {
-    background: var(--bleed);
-    color: var(--paper);
-    border-color: var(--bleed);
-  }
-  .edit-tools .save-btn {
-    opacity: 0.5;
-    pointer-events: none;
-    transition: opacity 0.2s;
-  }
-  body.edit-mode .edit-tools .save-btn {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  body.edit-mode .edit-tools .save-btn.has-changes {
-    background: var(--bleed);
-    color: var(--paper);
-    border-color: var(--bleed);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(184, 18, 26, 0.4); }
-    50% { box-shadow: 0 0 0 8px rgba(184, 18, 26, 0); }
-  }
-  /* visual affordance for editable zones */
-  body.edit-mode [contenteditable="true"] {
-    cursor: text;
-    transition: background 0.15s, outline 0.15s;
-  }
-  body.edit-mode [contenteditable="true"]:hover {
-    background: rgba(184, 18, 26, 0.04);
-    outline: 1px dashed rgba(184, 18, 26, 0.4);
-    outline-offset: 3px;
-  }
-  body.edit-mode [contenteditable="true"]:focus {
-    background: rgba(184, 18, 26, 0.06);
-    outline: 2px solid var(--bleed);
-    outline-offset: 3px;
-    box-shadow: 0 0 0 6px rgba(184, 18, 26, 0.08);
-  }
-  /* hide edit tools when printing or saved */
   @media print {
-    .edit-tools, .top, .chapter-rail { display: none !important; }
+    .top, .chapter-rail { display: none !important; }
   }
 
   /* ── back to top fab ───────────────────────── */
@@ -1080,32 +1041,32 @@
   <h2 class="section-title" contenteditable="false">An afternoon evening's night worth, <em>checked off.</em></h2>
   <p class="section-deck" contenteditable="false">Every single one of these takes under an hour. Most take under five minutes. Click the boxes if you wanna feel the satisfaction, I added that for you specifically because I'm awesome, it saves too, try it out.</p>
 
-  <div class="checklist">
-    <div class="checklist-row" onclick="this.classList.toggle('done')">
+  <div class="checklist" id="quick-wins">
+    <div class="checklist-row" data-id="typo-hines">
       <div class="box"></div>
       <div class="text" contenteditable="false">fix the <strong>"Colonial Hines"</strong> → "Colonel David R. Hines" typo on the Leadership &amp; Values page</div>
     </div>
-    <div class="checklist-row" onclick="this.classList.toggle('done')">
+    <div class="checklist-row" data-id="phone-consolidate">
       <div class="box"></div>
       <div class="text" contenteditable="false">pick one campaign phone number, update the site, the resume PDF, and social profiles</div>
     </div>
-    <div class="checklist-row" onclick="this.classList.toggle('done')">
+    <div class="checklist-row" data-id="click-here-links">
       <div class="box"></div>
       <div class="text" contenteditable="false">replace every <strong>"Click here to learn more…"</strong> link with descriptive text. it appears <strong>six times</strong> on the homepage. six. somebody got tired halfway through and stopped trying</div>
     </div>
-    <div class="checklist-row" onclick="this.classList.toggle('done')">
+    <div class="checklist-row" data-id="trustedsite-badge">
       <div class="box"></div>
       <div class="text" contenteditable="false">turn off the <strong>"TrustedSite Certified"</strong> floating badge in the bottom-left corner. it's a GoDaddy site-builder feature, not an endorsement, it doesn't even render properly and a voter glancing at it might think the campaign got certified by something. they did not. it's the website equivalent of those "as seen on TV" badges from 2007</div>
     </div>
-    <div class="checklist-row" onclick="this.classList.toggle('done')">
+    <div class="checklist-row" data-id="volunteer-promote">
       <div class="box"></div>
       <div class="text" contenteditable="false">promote <strong>"Volunteer Sign-Up"</strong> out of the "More" menu and into the top-level nav</div>
     </div>
-    <div class="checklist-row" onclick="this.classList.toggle('done')">
+    <div class="checklist-row" data-id="election-footer">
       <div class="box"></div>
       <div class="text" contenteditable="false">add <strong>"Special Election · Tuesday, November 3, 2026"</strong> to the footer with a link to <code>elections.virginia.gov</code></div>
     </div>
-    <div class="checklist-row" onclick="this.classList.toggle('done')">
+    <div class="checklist-row" data-id="connect-color">
       <div class="box"></div>
       <div class="text" contenteditable="false">fix the "Connect with Rickey" section, the blue Facebook link on red literally hurts to look at. white text on the red, or move the link off the red panel entirely</div>
     </div>
@@ -1406,12 +1367,6 @@
   <div class="sig" contenteditable="false">— your friend who has too much free time · May 14, 2026</div>
 </section>
 
-<!-- edit-mode floating tools -->
-<div class="edit-tools">
-  <button id="edit-btn" class="edit-btn" title="Toggle edit mode">✎ Edit</button>
-  <button id="save-btn" class="save-btn has-changes" title="Download an HTML copy with your edits">💾 Save copy</button>
-</div>
-
 <!-- back-to-top -->
 <button class="top visible" id="top-btn" aria-label="Back to top">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 15l7-7 7 7"></path></svg>
@@ -1494,6 +1449,84 @@
     });
   }
 
+  // ── checklist persistence (localStorage) + celebration
+  const checklist = document.getElementById('quick-wins');
+  if (checklist) {
+    const STORAGE_KEY = 'dandridge-audit:quick-wins';
+    const CONFETTI_COLORS = ['#b8861b', '#b8121a', '#15140f', '#8e0d14', '#b8861b'];
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') || {}; }
+    catch (_) { saved = {}; }
+
+    checklist.querySelectorAll('.checklist-row').forEach(row => {
+      if (saved[row.dataset.id]) row.classList.add('done');
+    });
+
+    let audioCtx;
+    function playChime() {
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+        // E5 → A5, two staggered sine pings — bright editorial "ding"
+        [659.25, 880.00].forEach((freq, i) => {
+          const t0 = now + i * 0.08;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0, t0);
+          gain.gain.linearRampToValueAtTime(0.16, t0 + 0.012);
+          gain.gain.exponentialRampToValueAtTime(0.0008, t0 + 0.28);
+          osc.connect(gain).connect(audioCtx.destination);
+          osc.start(t0);
+          osc.stop(t0 + 0.32);
+        });
+      } catch (_) { /* audio blocked — fail silent */ }
+    }
+
+    function celebrate(row) {
+      const box = row.querySelector('.box');
+      if (!box) return;
+
+      row.classList.remove('celebrate');
+      void row.offsetWidth; // restart animation
+      row.classList.add('celebrate');
+      setTimeout(() => row.classList.remove('celebrate'), 750);
+
+      // Spawn confetti dots radiating from the checkbox
+      const count = 10;
+      for (let i = 0; i < count; i++) {
+        const dot = document.createElement('span');
+        dot.className = 'confetti';
+        const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
+        const dist  = 28 + Math.random() * 22;
+        dot.style.setProperty('--tx',  Math.cos(angle) * dist + 'px');
+        dot.style.setProperty('--ty',  Math.sin(angle) * dist + 'px');
+        dot.style.setProperty('--rot', (Math.random() * 360 - 180) + 'deg');
+        dot.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+        box.appendChild(dot);
+        setTimeout(() => dot.remove(), 800);
+      }
+
+      playChime();
+    }
+
+    checklist.addEventListener('click', (e) => {
+      const row = e.target.closest('.checklist-row');
+      if (!row || !checklist.contains(row)) return;
+      row.classList.toggle('done');
+      if (row.classList.contains('done')) celebrate(row);
+
+      const state = {};
+      checklist.querySelectorAll('.checklist-row.done').forEach(r => {
+        if (r.dataset.id) state[r.dataset.id] = true;
+      });
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+      catch (_) { /* quota or private mode — silently ignore */ }
+    });
+  }
+
   // ── timeline tabs
   const timelineTabs = document.getElementById('timeline-tabs');
   if (timelineTabs) {
@@ -1507,98 +1540,6 @@
     });
   }
 
-  // ── live edit mode ────────────────────────────
-  // Selectors that should become contenteditable in edit mode
-  // (skip interactive controls like buttons + filter pills + tab buttons + checklist boxes)
-  const EDITABLE = [
-    'p', 'li',
-    'h1', 'h2', 'h3', 'h4',
-    '.deck', '.section-deck',
-    '.gloss', '.cap', '.big',
-    '.section-title', '.section-num',
-    '.kicker', '.byline',
-    '.area', '.pct',
-    '.pullquote p', '.pullquote .attr',
-    '.chapter h3', '.chapter-tag', '.chapter-num',
-    '.ba-pane',
-    '.copy-spread h4',
-    '.sig', '.ornament',
-    '.checklist-row .text',
-    '.area-head h4',
-    '.area ul li',
-    '.timeline-list li'
-  ].join(', ');
-
-  const editBtn  = document.getElementById('edit-btn');
-  const saveBtn  = document.getElementById('save-btn');
-  let hasChanges = false;
-
-  function setEditMode(on) {
-    document.body.classList.toggle('edit-mode', on);
-    document.querySelectorAll(EDITABLE).forEach(el => {
-      // Don't make things inside interactive widgets editable
-      if (el.closest('.filter-btn') || el.closest('.timeline-tab')) return;
-      el.contentEditable = on ? 'true' : 'false';
-    });
-    editBtn.textContent = on ? '✓ Editing' : '✎ Edit';
-    editBtn.classList.toggle('active', on);
-  }
-
-  editBtn.addEventListener('click', () => {
-    setEditMode(!document.body.classList.contains('edit-mode'));
-  });
-
-  // Mark changes when typing
-  document.addEventListener('input', (e) => {
-    if (!document.body.classList.contains('edit-mode')) return;
-    if (!e.target.isContentEditable) return;
-    hasChanges = true;
-    saveBtn.classList.add('has-changes');
-  });
-
-  // Save button: download a self-contained HTML file with current edits
-  saveBtn.addEventListener('click', () => {
-    // Reset contenteditable so the saved file is "clean" (recipients can re-enable edit if they want)
-    const wasEdit = document.body.classList.contains('edit-mode');
-    if (wasEdit) setEditMode(false);
-
-    // Snapshot current DOM
-    const snapshot = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-    const blob = new Blob([snapshot], { type: 'text/html;charset=utf-8' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    const stamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 12);
-    a.href = url;
-    a.download = `dandridge-audit-${stamp}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    // Restore edit mode if it was on
-    if (wasEdit) setEditMode(true);
-
-    hasChanges = false;
-    saveBtn.classList.remove('has-changes');
-  });
-
-  // Warn before navigating away with unsaved edits
-  window.addEventListener('beforeunload', (e) => {
-    if (hasChanges) {
-      e.preventDefault();
-      e.returnValue = '';
-    }
-  });
-
-  // Quality-of-life: Ctrl/Cmd+S triggers save while in edit mode
-  document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
-      if (document.body.classList.contains('edit-mode')) {
-        e.preventDefault();
-        saveBtn.click();
-      }
-    }
-  });
 })();
 </script>
 
